@@ -1,0 +1,7 @@
+//
+// Prefix header for all source files of the 'WeChatHelper' target in the 'WeChatHelper' project
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif
