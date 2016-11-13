@@ -197,6 +197,16 @@ CHMethod1(void, SeePeopleNearByLogicController, onRetrieveLocationOK, id, arg1) 
     }
 }
 
+CHDeclareClass(MMPickLocationViewController);
+
+CHMethod2(void, MMPickLocationViewController, updatePOIListWithCoordinate, CLLocationCoordinate2D, arg1, StartFromFirst, id, arg2) {
+    CHSuper2(MMPickLocationViewController, updatePOIListWithCoordinate, arg1, StartFromFirst, arg2);
+}
+
+CHMethod3(void, MMPickLocationViewController, updataSearchListWithCoordinate, CLLocationCoordinate2D, arg1, Keyword, id, arg2, StartFromFirst, id, arg3) {
+    CHSuper3(MMPickLocationViewController, updataSearchListWithCoordinate, arg1, Keyword, arg2, StartFromFirst, arg3);
+}
+
 CHConstructor {
     @autoreleasepool {
         CHLoadLateClass(MicroMessengerAppDelegate);
@@ -213,6 +223,9 @@ CHConstructor {
         CHClassHook1(CMessageMgr, onRevokeMsg);
         CHLoadLateClass(SeePeopleNearByLogicController);
         CHHook1(SeePeopleNearByLogicController, onRetrieveLocationOK);
+        CHLoadLateClass(MMPickLocationViewController);
+        CHClassHook2(MMPickLocationViewController, updatePOIListWithCoordinate, StartFromFirst);
+        CHClassHook3(MMPickLocationViewController, updataSearchListWithCoordinate, Keyword, StartFromFirst);
     }
 }
 
