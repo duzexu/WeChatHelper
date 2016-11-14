@@ -12,30 +12,26 @@
 #import "WeChatHelperSetting.h"
 
 CHDeclareClass(MicroMessengerAppDelegate);
-
+static UILabel *label = nil;
 CHMethod1(void, MicroMessengerAppDelegate, applicationDidBecomeActive, id, arg1) {
     CHSuper1(MicroMessengerAppDelegate, applicationDidBecomeActive, arg1);
-    
 }
 
 CHDeclareClass(MMUIViewController);
 
-static UILabel *label = nil;
 static NSInteger oldSection;
 
-CHMethod1(void, MMUIViewController, viewWillAppear, id, arg1) {
-    CHSuper1(MMUIViewController, viewWillAppear, arg1);
+CHMethod1(void, MMUIViewController, viewDidAppear, id, arg1) {
+    CHSuper1(MMUIViewController, viewDidAppear, arg1);
+//    [label removeFromSuperview];
 //    if (!label) {
-//        label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, [UIScreen mainScreen].bounds.size.width, 100)];
+//        label = [[UILabel alloc] initWithFrame:CGRectMake(0, 64, [UIScreen mainScreen].bounds.size.width, 100)];
 //        label.backgroundColor= [UIColor colorWithWhite:0 alpha:0.3];
 //        label.textColor = [UIColor whiteColor];
 //        label.numberOfLines = 0;
 //        label.font = [UIFont systemFontOfSize:9];
 //    }
-//    UIViewController *root = [[[[UIApplication sharedApplication] windows] firstObject] rootViewController];
-//    if (!label.superview) {
-//        [root.view addSubview:label];
-//    }
+//    [[self view] addSubview:label];
 //    label.text = NSStringFromClass([self class]);
 }
 
@@ -118,6 +114,9 @@ CHMethod2(void, CMessageMgr, AsyncOnAddMsg, id, arg1, MsgWrap, id, arg2) {
             id m_nsUsrName = object_getIvar(selfContact, nsUsrNameIvar);
             BOOL isMesasgeFromMe = [m_nsFromUsr isEqualToString:m_nsUsrName];
             BOOL isChatroom = [m_nsFromUsr rangeOfString:@"@chatroom"].location != NSNotFound;
+            if (isMesasgeFromMe && !isChatroom) {
+                break;
+            }
             if(isMesasgeFromMe && !HELPER_SETTING.redEnvPluginForMyself && isChatroom) {
                 //不抢群里自己的红包
                 break;
@@ -197,14 +196,14 @@ CHMethod1(void, SeePeopleNearByLogicController, onRetrieveLocationOK, id, arg1) 
     }
 }
 
-CHDeclareClass(MMPickLocationViewController);
+CHDeclareClass(WCTimelinePOIPickerViewController);
 
-CHMethod2(void, MMPickLocationViewController, updatePOIListWithCoordinate, CLLocationCoordinate2D, arg1, StartFromFirst, id, arg2) {
-    CHSuper2(MMPickLocationViewController, updatePOIListWithCoordinate, arg1, StartFromFirst, arg2);
-}
-
-CHMethod3(void, MMPickLocationViewController, updataSearchListWithCoordinate, CLLocationCoordinate2D, arg1, Keyword, id, arg2, StartFromFirst, id, arg3) {
-    CHSuper3(MMPickLocationViewController, updataSearchListWithCoordinate, arg1, Keyword, arg2, StartFromFirst, arg3);
+CHMethod1(void, WCTimelinePOIPickerViewController, onRetrieveLocationOK, id, arg1) {
+    if (HELPER_SETTING.fakeLocPluginIsOn) {
+        CHSuper1(WCTimelinePOIPickerViewController, onRetrieveLocationOK, HELPER_SETTING.fakeLocation);
+    }else{
+        CHSuper1(WCTimelinePOIPickerViewController, onRetrieveLocationOK, arg1);
+    }
 }
 
 CHConstructor {
@@ -212,7 +211,7 @@ CHConstructor {
         CHLoadLateClass(MicroMessengerAppDelegate);
         CHClassHook1(MicroMessengerAppDelegate, applicationDidBecomeActive);
         CHLoadLateClass(MMUIViewController);
-        CHClassHook1(MMUIViewController, viewWillAppear);
+        CHClassHook1(MMUIViewController, viewDidAppear);
         CHLoadLateClass(FindFriendEntryViewController);
         CHClassHook1(FindFriendEntryViewController, numberOfSectionsInTableView);
         CHClassHook2(FindFriendEntryViewController, tableView, cellForRowAtIndexPath);
@@ -223,9 +222,8 @@ CHConstructor {
         CHClassHook1(CMessageMgr, onRevokeMsg);
         CHLoadLateClass(SeePeopleNearByLogicController);
         CHHook1(SeePeopleNearByLogicController, onRetrieveLocationOK);
-        CHLoadLateClass(MMPickLocationViewController);
-        CHClassHook2(MMPickLocationViewController, updatePOIListWithCoordinate, StartFromFirst);
-        CHClassHook3(MMPickLocationViewController, updataSearchListWithCoordinate, Keyword, StartFromFirst);
+        CHLoadLateClass(WCTimelinePOIPickerViewController);
+        CHClassHook1(WCTimelinePOIPickerViewController, onRetrieveLocationOK);
     }
 }
 
