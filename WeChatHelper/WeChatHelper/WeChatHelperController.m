@@ -10,7 +10,7 @@
 #import "WeChatHelperSetting.h"
 #import "WeChatMapController.h"
 
-@interface WeChatHelperController ()<UITableViewDelegate,UITableViewDataSource>
+@interface WeChatHelperController ()<UITableViewDelegate,UITableViewDataSource,UIAlertViewDelegate>
 
 @property (nonatomic, strong) UITableView *tableView;
 
@@ -46,6 +46,10 @@
     [_tableView reloadData];
 }
 
+- (BOOL)shouldAutorotate {
+    return NO;
+}
+
 #pragma mark - Action
 - (void)switchAction:(UISwitch *)sender {
     if (sender.tag == 0) {
@@ -64,10 +68,14 @@
     HELPER_SETTING.forbidRevokeIsOn = !HELPER_SETTING.forbidRevokeIsOn;
 }
 
+- (void)stepAction:(UISwitch *)sender {
+    HELPER_SETTING.fakeStepPluginIsOn = !HELPER_SETTING.fakeStepPluginIsOn;
+}
+
 #pragma mark - UITableView Datasource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView; {
-    return 4;
+    return 5;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -83,6 +91,9 @@
             break;
         case 3:
             return 1;
+            break;
+        case 4:
+            return 2;
             break;
         default:
             return 0;
@@ -148,6 +159,19 @@
             switchButton.on = HELPER_SETTING.forbidRevokeIsOn;
         }
             break;
+        case 4:{
+            if (indexPath.row == 0) {
+                UISwitch *switchButton = [UISwitch new];
+                [switchButton addTarget:self action:@selector(stepAction:) forControlEvents:UIControlEventValueChanged];
+                cell.accessoryView = switchButton;
+                cell.textLabel.text = @"朋友圈步数";
+                switchButton.on = HELPER_SETTING.fakeStepPluginIsOn;
+            }else{
+                cell.textLabel.text = [NSString stringWithFormat:@"当前步数 %d",(int)HELPER_SETTING.fakeStepCount];
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            }
+        }
+            break;
         default:
             break;
     }
@@ -179,6 +203,27 @@
         WeChatMapController *vc = [[WeChatMapController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
     }
+    if (indexPath.section == 4) {
+        UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"设置步数"
+                                                        message:nil
+                                                       delegate:self
+                                              cancelButtonTitle:@"确定"
+                                              otherButtonTitles:nil, nil];
+        alert.alertViewStyle = UIAlertViewStylePlainTextInput;
+        alert.delegate = self;
+        [alert show];
+    }
+}
+
+#pragma mark - UIAlertViewDelegate
+- (void)willPresentAlertView:(UIAlertView *)alertView {
+    UITextField *textField = [alertView textFieldAtIndex:0];
+    textField.text = @(HELPER_SETTING.fakeStepCount).stringValue;
+}
+
+- (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
+    UITextField *textField = [alertView textFieldAtIndex:0];
+    HELPER_SETTING.fakeStepCount = textField.text.integerValue;
 }
 
 @end

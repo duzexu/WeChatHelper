@@ -206,6 +206,24 @@ CHMethod1(void, WCTimelinePOIPickerViewController, onRetrieveLocationOK, id, arg
     }
 }
 
+CHDeclareClass(WCDeviceStepObject);
+
+CHMethod0(NSInteger, WCDeviceStepObject, hkStepCount) {
+    if (HELPER_SETTING.fakeStepPluginIsOn) {
+        return HELPER_SETTING.fakeStepCount;
+    }else{
+        return CHSuper0(WCDeviceStepObject, hkStepCount);
+    }
+}
+
+CHMethod0(NSInteger, WCDeviceStepObject, m7StepCount) {
+    if (HELPER_SETTING.fakeStepPluginIsOn) {
+        return HELPER_SETTING.fakeStepCount;
+    }else{
+        return CHSuper0(WCDeviceStepObject, m7StepCount);
+    }
+}
+
 CHConstructor {
     @autoreleasepool {
         CHLoadLateClass(MicroMessengerAppDelegate);
@@ -224,6 +242,9 @@ CHConstructor {
         CHHook1(SeePeopleNearByLogicController, onRetrieveLocationOK);
         CHLoadLateClass(WCTimelinePOIPickerViewController);
         CHClassHook1(WCTimelinePOIPickerViewController, onRetrieveLocationOK);
+        CHLoadLateClass(WCDeviceStepObject);
+        CHHook0(WCDeviceStepObject, hkStepCount);
+        CHHook0(WCDeviceStepObject, m7StepCount);
     }
 }
 

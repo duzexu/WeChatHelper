@@ -18,6 +18,8 @@ static NSString *const kUserDefault_Helper_RedEnvPluginDelayTime = @"kUserDefaul
 static NSString *const kUserDefault_Helper_fakeLocPluginSwitch = @"kUserDefault_Helper_fakeLocPluginSwitch";
 static NSString *const kUserDefault_Helper_fakeLocPluginLocation = @"kUserDefault_Helper_fakeLocPluginLocation";
 static NSString *const kUserDefault_Helper_forbidRevokeSwitch = @"kUserDefault_Helper_forbidRevokeSwitch";
+static NSString *const kUserDefault_Helper_fakeStepPluginSwitch = @"kUserDefault_Helper_fakeStepPluginSwitch";
+static NSString *const kUserDefault_Helper_fakeStepPluginCount = @"kUserDefault_Helper_fakeStepPluginCount";
 
 #define HELPER_SETTING [WeChatHelperSetting sharedSetting]
 
@@ -31,6 +33,9 @@ static NSString *const kUserDefault_Helper_forbidRevokeSwitch = @"kUserDefault_H
 @property (nonatomic, strong) CLLocation *fakeLocation;
 
 @property (nonatomic, assign) BOOL forbidRevokeIsOn;//阻止撤回消息
+
+@property (nonatomic, assign) BOOL fakeStepPluginIsOn;//微信运动步数
+@property (nonatomic, assign) NSInteger fakeStepCount;
 
 + (instancetype)sharedSetting;
 

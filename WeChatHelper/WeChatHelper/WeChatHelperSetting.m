@@ -36,6 +36,8 @@
             _fakeLocation = [[CLLocation alloc] initWithLatitude:39.912 longitude:116.402];
         }
         _forbidRevokeIsOn = [defaults boolForKey:kUserDefault_Helper_forbidRevokeSwitch];
+        _fakeStepPluginIsOn = [defaults boolForKey:kUserDefault_Helper_fakeStepPluginSwitch];
+        _fakeStepCount = [defaults integerForKey:kUserDefault_Helper_fakeStepPluginCount];
     }
     return self;
 }
@@ -71,6 +73,16 @@
 - (void)setForbidRevokeIsOn:(BOOL)forbidRevokeIsOn {
     _forbidRevokeIsOn = forbidRevokeIsOn;
     [[NSUserDefaults standardUserDefaults] setBool:forbidRevokeIsOn forKey:kUserDefault_Helper_forbidRevokeSwitch];
+}
+
+- (void)setFakeStepPluginIsOn:(BOOL)fakeStepPluginIsOn {
+    _fakeStepPluginIsOn = fakeStepPluginIsOn;
+    [[NSUserDefaults standardUserDefaults] setBool:fakeStepPluginIsOn forKey:kUserDefault_Helper_fakeStepPluginSwitch];
+}
+
+- (void)setFakeStepCount:(NSInteger)fakeStepCount {
+    _fakeStepCount = fakeStepCount;
+    [[NSUserDefaults standardUserDefaults] setInteger:fakeStepCount forKey:kUserDefault_Helper_fakeStepPluginCount];
 }
 
 @end

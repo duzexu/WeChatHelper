@@ -52,6 +52,10 @@
     HELPER_SETTING.fakeLocation = [[CLLocation alloc] initWithLatitude:_mapView.centerCoordinate.latitude longitude:_mapView.centerCoordinate.longitude];
 }
 
+- (BOOL)shouldAutorotate {
+    return NO;
+}
+
 - (void)handleGesture:(UIGestureRecognizer *)gestureRecognizer {
     _centerAnnotation.coordinate = _mapView.centerCoordinate;
 }
