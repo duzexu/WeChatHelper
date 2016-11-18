@@ -131,6 +131,7 @@
             }else{
                 cell.textLabel.text = @"秒抢";
             }
+            cell.accessoryView = nil;
             if (indexPath.row == _selectIndex) {
                 cell.accessoryType = UITableViewCellAccessoryCheckmark;
             }else{
@@ -147,6 +148,7 @@
                 switchButton.on = HELPER_SETTING.fakeLocPluginIsOn;
             }else{
                 cell.textLabel.text = [NSString stringWithFormat:@"当前经纬度 %@",HELPER_SETTING.fakeLocation.description];
+                cell.accessoryView = nil;
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             }
         }
@@ -168,6 +170,7 @@
                 switchButton.on = HELPER_SETTING.fakeStepPluginIsOn;
             }else{
                 cell.textLabel.text = [NSString stringWithFormat:@"当前步数 %d",(int)HELPER_SETTING.fakeStepCount];
+                cell.accessoryView = nil;
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             }
         }
