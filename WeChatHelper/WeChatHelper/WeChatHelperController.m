@@ -199,11 +199,11 @@
         _selectIndex = indexPath.row;
         [_tableView reloadSections:[NSIndexSet indexSetWithIndex:1] withRowAnimation:UITableViewRowAnimationNone];
     }
-    if (indexPath.section == 2) {
+    if (indexPath.section == 2 && indexPath.row == 1) {
         WeChatMapController *vc = [[WeChatMapController alloc] init];
         [self.navigationController pushViewController:vc animated:YES];
     }
-    if (indexPath.section == 4) {
+    if (indexPath.section == 4 && indexPath.row == 1) {
         UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"设置步数"
                                                         message:nil
                                                        delegate:self
@@ -224,6 +224,7 @@
 - (void)alertView:(UIAlertView *)alertView didDismissWithButtonIndex:(NSInteger)buttonIndex {
     UITextField *textField = [alertView textFieldAtIndex:0];
     HELPER_SETTING.fakeStepCount = textField.text.integerValue;
+    [_tableView reloadData];
 }
 
 @end
