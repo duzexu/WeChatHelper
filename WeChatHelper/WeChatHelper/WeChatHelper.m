@@ -25,7 +25,7 @@ CHMethod1(void, MMUIViewController, viewDidAppear, id, arg1) {
     CHSuper1(MMUIViewController, viewDidAppear, arg1);
 //    [label removeFromSuperview];
 //    if (!label) {
-//        label = [[UILabel alloc] initWithFrame:CGRectMake(0, 64, [UIScreen mainScreen].bounds.size.width, 100)];
+//        label = [[UILabel alloc] initWithFrame:CGRectMake(0, 64, [UIScreen mainScreen].bounds.size.width, 400)];
 //        label.backgroundColor= [UIColor colorWithWhite:0 alpha:0.3];
 //        label.textColor = [UIColor whiteColor];
 //        label.numberOfLines = 0;
@@ -92,7 +92,7 @@ CHMethod2(void, CMessageMgr, AsyncOnAddMsg, id, arg1, MsgWrap, id, arg2) {
     
     Ivar nsContentIvar = class_getInstanceVariable(objc_getClass("CMessageWrap"), "m_nsContent");
     id m_nsContent = object_getIvar(arg2, nsContentIvar);
-    label.text = [NSString stringWithFormat:@"类型：%d 发送者：%@ 消息内容：%@",(int)m_uiMessageType,m_nsFromUsr,m_nsContent];
+    //label.text = [NSString stringWithFormat:@"类型：%d 发送者：%@ 消息内容：%@",(int)m_uiMessageType,m_nsFromUsr,m_nsContent];
     
     switch(m_uiMessageType) {
         case 49: {
@@ -168,6 +168,10 @@ CHMethod2(void, CMessageMgr, AsyncOnAddMsg, id, arg1, MsgWrap, id, arg2) {
                 
                 if (HELPER_SETTING.redEnvPluginDelay > 0) {
                     [logicMgr performSelector:@selector(OpenRedEnvelopesRequest:) withObject:params afterDelay:HELPER_SETTING.redEnvPluginDelay];
+                }else if (HELPER_SETTING.redEnvPluginDelay < 0) {
+                    int index = arc4random() % WeChatHelperDelayTimes.count;
+                    double delay = [WeChatHelperDelayTimes[index] doubleValue];
+                    [logicMgr performSelector:@selector(OpenRedEnvelopesRequest:) withObject:params afterDelay:delay];
                 }else{
                     ((void (*)(id, SEL, NSMutableDictionary*))objc_msgSend)(logicMgr, @selector(OpenRedEnvelopesRequest:), params);
                 }

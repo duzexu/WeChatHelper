@@ -25,7 +25,7 @@
     [super viewDidLoad];
     self.title = @"助手设置";
     self.view.backgroundColor = [UIColor colorWithRed:239/255.0 green:239/255.0 blue:244/255.0 alpha:1];
-    self.delayTimes = @[@0,@0.5,@0.8,@1,@1.2,@1.5];
+    self.delayTimes = WeChatHelperDelayTimes;
     _tableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 0, 100, 100) style:UITableViewStyleGrouped];
     _tableView.backgroundColor = [UIColor clearColor];
     _tableView.delegate = self;
@@ -128,6 +128,8 @@
             NSNumber *time = _delayTimes[indexPath.row];
             if (time.doubleValue > 0) {
                 cell.textLabel.text = [NSString stringWithFormat:@"延时 %@ s",time];
+            }else if (time.doubleValue < 0) {
+                cell.textLabel.text = @"随机";
             }else{
                 cell.textLabel.text = @"秒抢";
             }
