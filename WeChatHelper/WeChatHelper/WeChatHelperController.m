@@ -58,6 +58,9 @@
     if (sender.tag == 1) {
         HELPER_SETTING.redEnvPluginForMyself = !HELPER_SETTING.redEnvPluginForMyself;
     }
+    if (sender.tag == 2) {
+        HELPER_SETTING.runInBackGround = !HELPER_SETTING.runInBackGround;
+    }
 }
 
 - (void)locationAction:(UISwitch *)sender {
@@ -81,7 +84,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch (section) {
         case 0:
-            return 2;
+            return 3;
             break;
         case 1:
             return _delayTimes.count;
@@ -118,9 +121,12 @@
             if (indexPath.row == 0) {
                 cell.textLabel.text = @"自动抢红包";
                 switchButton.on = HELPER_SETTING.redEnvPluginIsOn;
-            }else{
+            }else if (indexPath.row == 1) {
                 cell.textLabel.text = @"抢自己的红包";
                 switchButton.on = HELPER_SETTING.redEnvPluginForMyself;
+            }else{
+                cell.textLabel.text = @"后台运行";
+                switchButton.on = HELPER_SETTING.runInBackGround;
             }
         }
             break;

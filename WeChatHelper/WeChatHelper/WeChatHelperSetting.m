@@ -27,6 +27,7 @@
         _redEnvPluginIsOn = [defaults boolForKey:kUserDefault_Helper_RedEnvPluginSwitch];
         _redEnvPluginForMyself = [defaults boolForKey:kUserDefault_Helper_RedEnvPluginForMyself];
         _redEnvPluginDelay = [defaults doubleForKey:kUserDefault_Helper_RedEnvPluginDelayTime];
+        _runInBackGround = [defaults boolForKey:kUserDefault_Helper_RunInBackGroundSwitch];
         _fakeLocPluginIsOn = [defaults boolForKey:kUserDefault_Helper_fakeLocPluginSwitch];
         //默认位置 39.9128640000,116.4021780000
         NSArray *loc = [defaults objectForKey:kUserDefault_Helper_fakeLocPluginLocation];
@@ -55,6 +56,11 @@
 -(void)setRedEnvPluginDelay:(NSTimeInterval)redEnvPluginDelay {
     _redEnvPluginDelay = redEnvPluginDelay;
     [[NSUserDefaults standardUserDefaults] setDouble:redEnvPluginDelay forKey:kUserDefault_Helper_RedEnvPluginDelayTime];
+}
+
+- (void)setRunInBackGround:(BOOL)runInBackGround {
+    _runInBackGround = runInBackGround;
+    [[NSUserDefaults standardUserDefaults] setBool:runInBackGround forKey:kUserDefault_Helper_RunInBackGroundSwitch];
 }
 
 - (void)setFakeLocPluginIsOn:(BOOL)fakeLocPluginIsOn {

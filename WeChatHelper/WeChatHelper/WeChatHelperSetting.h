@@ -15,6 +15,7 @@
 static NSString *const kUserDefault_Helper_RedEnvPluginSwitch = @"kUserDefault_Helper_RedEnvPluginSwitch";
 static NSString *const kUserDefault_Helper_RedEnvPluginForMyself = @"kUserDefault_Helper_RedEnvPluginForMyself";
 static NSString *const kUserDefault_Helper_RedEnvPluginDelayTime = @"kUserDefault_Helper_RedEnvPluginDelayTime";
+static NSString *const kUserDefault_Helper_RunInBackGroundSwitch = @"kUserDefault_Helper_RunInBackGroundSwitch";
 static NSString *const kUserDefault_Helper_fakeLocPluginSwitch = @"kUserDefault_Helper_fakeLocPluginSwitch";
 static NSString *const kUserDefault_Helper_fakeLocPluginLocation = @"kUserDefault_Helper_fakeLocPluginLocation";
 static NSString *const kUserDefault_Helper_forbidRevokeSwitch = @"kUserDefault_Helper_forbidRevokeSwitch";
@@ -28,6 +29,7 @@ static NSString *const kUserDefault_Helper_fakeStepPluginCount = @"kUserDefault_
 @property (nonatomic, assign) BOOL redEnvPluginIsOn;//红包开关
 @property (nonatomic, assign) BOOL redEnvPluginForMyself;//抢自己发的红包
 @property (nonatomic, assign) NSTimeInterval redEnvPluginDelay;//红包延时
+@property (nonatomic, assign) BOOL runInBackGround;//后台运行
 
 @property (nonatomic, assign) BOOL fakeLocPluginIsOn;//地理位置开关
 @property (nonatomic, strong) CLLocation *fakeLocation;

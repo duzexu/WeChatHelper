@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BE3222081E2DC50C00E62AFD /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE3222071E2DC50C00E62AFD /* AVFoundation.framework */; };
 		BE7B0A2C1DD46AE700B4EAE9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE7B0A2B1DD46AE700B4EAE9 /* Foundation.framework */; };
 		BE7B0A2E1DD46AE700B4EAE9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE7B0A2D1DD46AE700B4EAE9 /* UIKit.framework */; };
 		BE7B0A3A1DD46AE700B4EAE9 /* WeChatHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = BE7B0A391DD46AE700B4EAE9 /* WeChatHelper.m */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		BE3222071E2DC50C00E62AFD /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		BE7B0A281DD46AE700B4EAE9 /* libWeChatHelper.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libWeChatHelper.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		BE7B0A2B1DD46AE700B4EAE9 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		BE7B0A2D1DD46AE700B4EAE9 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
@@ -47,6 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE3222081E2DC50C00E62AFD /* AVFoundation.framework in Frameworks */,
 				BEDE82DC1DD5D58C0077A272 /* CoreLocation.framework in Frameworks */,
 				BEDE82DB1DD5D5750077A272 /* MapKit.framework in Frameworks */,
 				BE7B0A2C1DD46AE700B4EAE9 /* Foundation.framework in Frameworks */,
@@ -77,6 +80,7 @@
 		BE7B0A2A1DD46AE700B4EAE9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				BE3222071E2DC50C00E62AFD /* AVFoundation.framework */,
 				BEDE82DA1DD5D5750077A272 /* MapKit.framework */,
 				BEDE82AC1DD5AF3A0077A272 /* CoreLocation.framework */,
 				BE7B0A2B1DD46AE700B4EAE9 /* Foundation.framework */,

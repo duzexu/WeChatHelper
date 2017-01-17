@@ -8,18 +8,49 @@
 
 #import "CaptainHook.h"
 #import <UIKit/UIKit.h>
+#import <AVFoundation/AVFoundation.h>
 #import "WeChatHelperController.h"
 #import "WeChatHelperSetting.h"
 
 CHDeclareClass(MicroMessengerAppDelegate);
-static UILabel *label = nil;
+
+static AVAudioPlayer *player = nil;
+
 CHMethod1(void, MicroMessengerAppDelegate, applicationDidBecomeActive, id, arg1) {
     CHSuper1(MicroMessengerAppDelegate, applicationDidBecomeActive, arg1);
+}
+
+CHMethod1(void, MicroMessengerAppDelegate, applicationWillResignActive, id, arg1) {
+    CHSuper1(MicroMessengerAppDelegate, applicationWillResignActive, arg1);
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    [session setActive:YES error:nil];
+    [session setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionMixWithOthers error:nil];
+}
+
+CHMethod1(void, MicroMessengerAppDelegate, applicationDidEnterBackground, id, arg1) {
+    CHSuper1(MicroMessengerAppDelegate, applicationDidEnterBackground, arg1);
+    
+    if (HELPER_SETTING.runInBackGround) {
+        if (!player) {
+            NSString *musicPath = [[NSBundle mainBundle] pathForResource:@"music" ofType:@"m4a"];
+            NSURL *url = [[NSURL alloc] initFileURLWithPath:musicPath];
+            player = [[AVAudioPlayer alloc] initWithContentsOfURL:url error:nil];
+            player.volume = 0.01;
+            player.numberOfLoops = -1;
+        }
+        [player play];
+    }
+}
+
+CHMethod1(void, MicroMessengerAppDelegate, applicationWillEnterForeground, id, arg1) {
+    CHSuper1(MicroMessengerAppDelegate, applicationWillEnterForeground, arg1);
+    [player stop];
 }
 
 CHDeclareClass(MMUIViewController);
 
 static NSInteger oldSection;
+static UILabel *label = nil;
 
 CHMethod1(void, MMUIViewController, viewDidAppear, id, arg1) {
     CHSuper1(MMUIViewController, viewDidAppear, arg1);
@@ -232,6 +263,9 @@ CHConstructor {
     @autoreleasepool {
         CHLoadLateClass(MicroMessengerAppDelegate);
         CHClassHook1(MicroMessengerAppDelegate, applicationDidBecomeActive);
+        CHClassHook1(MicroMessengerAppDelegate, applicationWillResignActive);
+        CHClassHook1(MicroMessengerAppDelegate, applicationDidEnterBackground);
+        CHClassHook1(MicroMessengerAppDelegate, applicationWillEnterForeground);
         CHLoadLateClass(MMUIViewController);
         CHClassHook1(MMUIViewController, viewDidAppear);
         CHLoadLateClass(FindFriendEntryViewController);
