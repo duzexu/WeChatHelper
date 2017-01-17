@@ -15,6 +15,7 @@
 CHDeclareClass(MicroMessengerAppDelegate);
 
 static AVAudioPlayer *player = nil;
+static UILabel *label = nil;
 
 CHMethod1(void, MicroMessengerAppDelegate, applicationDidBecomeActive, id, arg1) {
     CHSuper1(MicroMessengerAppDelegate, applicationDidBecomeActive, arg1);
@@ -22,9 +23,14 @@ CHMethod1(void, MicroMessengerAppDelegate, applicationDidBecomeActive, id, arg1)
 
 CHMethod1(void, MicroMessengerAppDelegate, applicationWillResignActive, id, arg1) {
     CHSuper1(MicroMessengerAppDelegate, applicationWillResignActive, arg1);
-    AVAudioSession *session = [AVAudioSession sharedInstance];
-    [session setActive:YES error:nil];
-    [session setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionMixWithOthers error:nil];
+    
+    if (HELPER_SETTING.runInBackGround) {
+        AVAudioSession *session = [AVAudioSession sharedInstance];
+        if (![session.category isEqualToString:@"AVAudioSessionCategoryPlayAndRecord"]) {
+            [session setActive:YES error:nil];
+            [session setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionMixWithOthers error:nil];
+        }
+    }
 }
 
 CHMethod1(void, MicroMessengerAppDelegate, applicationDidEnterBackground, id, arg1) {
@@ -50,7 +56,6 @@ CHMethod1(void, MicroMessengerAppDelegate, applicationWillEnterForeground, id, a
 CHDeclareClass(MMUIViewController);
 
 static NSInteger oldSection;
-static UILabel *label = nil;
 
 CHMethod1(void, MMUIViewController, viewDidAppear, id, arg1) {
     CHSuper1(MMUIViewController, viewDidAppear, arg1);
