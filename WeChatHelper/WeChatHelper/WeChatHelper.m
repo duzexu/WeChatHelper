@@ -26,7 +26,7 @@ CHMethod1(void, MicroMessengerAppDelegate, applicationWillResignActive, id, arg1
     
     if (HELPER_SETTING.runInBackGround) {
         AVAudioSession *session = [AVAudioSession sharedInstance];
-        if (![session.category isEqualToString:@"AVAudioSessionCategoryPlayAndRecord"]) {
+        if (![session.category isEqualToString:AVAudioSessionCategoryPlayAndRecord]) {
             [session setActive:YES error:nil];
             [session setCategory:AVAudioSessionCategoryPlayback withOptions:AVAudioSessionCategoryOptionMixWithOthers error:nil];
         }
@@ -36,7 +36,8 @@ CHMethod1(void, MicroMessengerAppDelegate, applicationWillResignActive, id, arg1
 CHMethod1(void, MicroMessengerAppDelegate, applicationDidEnterBackground, id, arg1) {
     CHSuper1(MicroMessengerAppDelegate, applicationDidEnterBackground, arg1);
     
-    if (HELPER_SETTING.runInBackGround) {
+    AVAudioSession *session = [AVAudioSession sharedInstance];
+    if (HELPER_SETTING.runInBackGround && ![session.category isEqualToString:AVAudioSessionCategoryPlayAndRecord]) {
         if (!player) {
             NSString *musicPath = [[NSBundle mainBundle] pathForResource:@"music" ofType:@"m4a"];
             NSURL *url = [[NSURL alloc] initFileURLWithPath:musicPath];
