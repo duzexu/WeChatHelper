@@ -9,13 +9,47 @@
 #import "CaptainHook.h"
 #import <UIKit/UIKit.h>
 #import <AVFoundation/AVFoundation.h>
+#import "WeChatHeader.h"
 #import "WeChatHelperController.h"
 #import "WeChatHelperSetting.h"
+#import "WeChatRedEnvelopManager.h"
 
+BOOL __addMethod(Class clazz, SEL sel, IMP function) {
+    NSString *selName = NSStringFromSelector(sel);
+    
+    NSMutableString *tmpString = [[NSMutableString alloc] initWithFormat:@"%@", selName];
+    
+    int count = (int)[tmpString replaceOccurrencesOfString:@":"
+                                                withString:@"_"
+                                                   options:NSCaseInsensitiveSearch
+                                                     range:NSMakeRange(0, selName.length)];
+    
+    NSMutableString *val = [[NSMutableString alloc] initWithString:@"i@:"];
+    
+    for (int i = 0; i < count; i++) {
+        [val appendString:@"@"];
+    }
+    const char *funcTypeEncoding = [val UTF8String];
+    return class_addMethod(clazz, sel, function, funcTypeEncoding);
+}
+
+NSString* bundleIdentifierFunction(id target, SEL cmd) {
+    return @"com.tencent.xin";
+}
+
+// 代理
 CHDeclareClass(MicroMessengerAppDelegate);
 
 static AVAudioPlayer *player = nil;
-static UILabel *label = nil;
+
+CHMethod2(BOOL, MicroMessengerAppDelegate, application, UIApplication*, ap, didFinishLaunchingWithOptions, NSDictionary*, launchOptions) {
+//    __addMethod([NSBundle class], @selector(wc_bundleIdentifier), bundleIdentifierFunction);
+//    Method originalMethod = class_getInstanceMethod([NSBundle class], @selector(bundleIdentifier));
+//    Method swizzledMethod = class_getInstanceMethod([NSBundle class], @selector(wc_bundleIdentifier));
+//    method_exchangeImplementations(originalMethod, swizzledMethod);
+    NSLog(@"## Load WeChatHelper ##");
+    return CHSuper2(MicroMessengerAppDelegate, application, ap, didFinishLaunchingWithOptions, launchOptions);
+}
 
 CHMethod1(void, MicroMessengerAppDelegate, applicationDidBecomeActive, id, arg1) {
     CHSuper1(MicroMessengerAppDelegate, applicationDidBecomeActive, arg1);
@@ -24,6 +58,7 @@ CHMethod1(void, MicroMessengerAppDelegate, applicationDidBecomeActive, id, arg1)
 CHMethod1(void, MicroMessengerAppDelegate, applicationWillResignActive, id, arg1) {
     CHSuper1(MicroMessengerAppDelegate, applicationWillResignActive, arg1);
     
+    [HELPER_SETTING saveSetting];
     if (HELPER_SETTING.runInBackGround) {
         AVAudioSession *session = [AVAudioSession sharedInstance];
         if (![session.category isEqualToString:AVAudioSessionCategoryPlayAndRecord]) {
@@ -54,23 +89,7 @@ CHMethod1(void, MicroMessengerAppDelegate, applicationWillEnterForeground, id, a
     [player stop];
 }
 
-CHDeclareClass(MMUIViewController);
-
 static NSInteger oldSection;
-
-CHMethod1(void, MMUIViewController, viewDidAppear, id, arg1) {
-    CHSuper1(MMUIViewController, viewDidAppear, arg1);
-//    [label removeFromSuperview];
-//    if (!label) {
-//        label = [[UILabel alloc] initWithFrame:CGRectMake(0, 64, [UIScreen mainScreen].bounds.size.width, 400)];
-//        label.backgroundColor= [UIColor colorWithWhite:0 alpha:0.3];
-//        label.textColor = [UIColor whiteColor];
-//        label.numberOfLines = 0;
-//        label.font = [UIFont systemFontOfSize:9];
-//    }
-//    [[self view] addSubview:label];
-//    label.text = NSStringFromClass([self class]);
-}
 
 CHDeclareClass(FindFriendEntryViewController);
 
@@ -112,107 +131,116 @@ CHMethod2(void, FindFriendEntryViewController, tableView, UITableView *, tb, did
 
 CHDeclareClass(CMessageMgr);
 
-CHMethod2(void, CMessageMgr, AsyncOnAddMsg, id, arg1, MsgWrap, id, arg2) {
-    CHSuper2(CMessageMgr, AsyncOnAddMsg, arg1, MsgWrap, arg2);
-    
-    if (!HELPER_SETTING.redEnvPluginIsOn) {
-        return;
+//MARK: At all
+CHMethod2(void, CMessageMgr, AddMsg, id, arg1, MsgWrap, CMessageWrap *, wrap){
+    NSUInteger type = wrap.m_uiMessageType;
+    NSString *mFromUser = wrap.m_nsFromUsr;
+    NSString *mToUsr = wrap.m_nsToUsr;
+    NSString *mContent = wrap.m_nsContent;
+    NSString *mSource = wrap.m_nsMsgSource;
+    CContactMgr *contactManager = [[objc_getClass("MMServiceCenter") defaultCenter] getService:[objc_getClass("CContactMgr") class]];
+    CContact *selfContact = [contactManager getSelfContact];
+    if (type == 1){
+        if ([mFromUser isEqualToString:selfContact.m_nsUsrName]) {
+            if ([mToUsr hasSuffix:@"@chatroom"]) {
+                if(!mSource){
+                    NSArray *result = (NSArray *)[objc_getClass("CContact") getChatRoomMemberWithoutMyself:mToUsr];
+                    if ([mContent hasPrefix:@"#所有人"]){
+                        // 前缀要求
+                        NSString *subStr = [mContent substringFromIndex:4];
+                        NSMutableString *string = [NSMutableString string];
+                        [result enumerateObjectsUsingBlock:^(CContact *obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                            [string appendFormat:@",%@",obj.m_nsUsrName];
+                        }];
+                        NSString *sourceString = [string substringFromIndex:1];
+                        wrap.m_uiStatus = 3;
+                        wrap.m_nsContent = subStr;
+                        wrap.m_nsMsgSource = [NSString stringWithFormat:@"<msgsource><atuserlist>%@</atuserlist></msgsource>",sourceString];
+                    }
+                }
+            }
+        }
     }
+    CHSuper(2, CMessageMgr,AddMsg,arg1,MsgWrap,wrap);
+}
+
+// 红包
+CHMethod2(void, CMessageMgr, AsyncOnAddMsg, NSString*, arg1, MsgWrap, CMessageWrap*, wrap) {
+    CHSuper2(CMessageMgr, AsyncOnAddMsg, arg1, MsgWrap, wrap);
+    Class contactMgrClass = [objc_getClass("CContactMgr") class];
+    CContactMgr *contactManager = [[objc_getClass("MMServiceCenter") defaultCenter] getService:contactMgrClass];
+    CContact *selfContact = [contactManager getSelfContact];
     
-    Ivar uiMessageTypeIvar = class_getInstanceVariable(objc_getClass("CMessageWrap"), "m_uiMessageType");
-    ptrdiff_t offset = ivar_getOffset(uiMessageTypeIvar);
-    unsigned char *stuffBytes = (unsigned char *)(__bridge void *)arg2;
-    NSUInteger m_uiMessageType = * ((NSUInteger *)(stuffBytes + offset));
+    BOOL isMesasgeFromMe = [wrap.m_nsFromUsr isEqualToString:selfContact.m_nsUsrName];
+    BOOL isChatroomReceive = [wrap.m_nsFromUsr rangeOfString:@"@chatroom"].location != NSNotFound;
+    BOOL isChatroomSender = [wrap.m_nsToUsr rangeOfString:@"@chatroom"].location != NSNotFound;
+    BOOL isChatroomSenderSelf = isMesasgeFromMe && isChatroomSender;
+    BOOL isInBlackList = [HELPER_SETTING.redEnvBlackList containsObject:wrap.m_nsFromUsr];
     
-    Ivar nsFromUsrIvar = class_getInstanceVariable(objc_getClass("CMessageWrap"), "m_nsFromUsr");
-    id m_nsFromUsr = object_getIvar(arg2, nsFromUsrIvar);
+    /** 是否自动抢红包 */
+    BOOL (^shouldReceiveRedEnvelop)() = ^BOOL() {
+        if (!HELPER_SETTING.redEnvPluginIsOn) { return NO; }
+        if (isInBlackList) { return NO; }
+        
+        return isChatroomReceive || (isChatroomSenderSelf && HELPER_SETTING.redEnvPluginForMyself);
+    };
     
-    Ivar nsContentIvar = class_getInstanceVariable(objc_getClass("CMessageWrap"), "m_nsContent");
-    id m_nsContent = object_getIvar(arg2, nsContentIvar);
-    //label.text = [NSString stringWithFormat:@"类型：%d 发送者：%@ 消息内容：%@",(int)m_uiMessageType,m_nsFromUsr,m_nsContent];
-    
-    switch(m_uiMessageType) {
-        case 49: {
-            // 49=红包
-            //微信的服务中心
-            Method methodMMServiceCenter = class_getClassMethod(objc_getClass("MMServiceCenter"), @selector(defaultCenter));
-            IMP impMMSC = method_getImplementation(methodMMServiceCenter);
-            id MMServiceCenter = impMMSC(objc_getClass("MMServiceCenter"), @selector(defaultCenter));
-            //红包控制器
-            id logicMgr = ((id (*)(id, SEL, Class))objc_msgSend)(MMServiceCenter, @selector(getService:),objc_getClass("WCRedEnvelopesLogicMgr"));
-            //通讯录管理器
-            id contactManager = ((id (*)(id, SEL, Class))objc_msgSend)(MMServiceCenter, @selector(getService:),objc_getClass("CContactMgr"));
-            
-            Method methodGetSelfContact = class_getInstanceMethod(objc_getClass("CContactMgr"), @selector(getSelfContact));
-            IMP impGS = method_getImplementation(methodGetSelfContact);
-            id selfContact = impGS(contactManager, @selector(getSelfContact));
-            
-            Ivar nsUsrNameIvar = class_getInstanceVariable([selfContact class], "m_nsUsrName");
-            id m_nsUsrName = object_getIvar(selfContact, nsUsrNameIvar);
-            BOOL isMesasgeFromMe = [m_nsFromUsr isEqualToString:m_nsUsrName];
-            BOOL isChatroom = [m_nsFromUsr rangeOfString:@"@chatroom"].location != NSNotFound;
-            if (isMesasgeFromMe && !isChatroom) {
-                break;
-            }
-            if(isMesasgeFromMe && !HELPER_SETTING.redEnvPluginForMyself && isChatroom) {
-                //不抢群里自己的红包
-                break;
-            }
-            if ([m_nsContent rangeOfString:@"wxpay://"].location != NSNotFound) {
-                NSString *nativeUrl = m_nsContent;
-                NSRange rangeStart = [m_nsContent rangeOfString:@"wxpay://c2cbizmessagehandler/hongbao"];
-                if (rangeStart.location != NSNotFound)
-                {
-                    NSUInteger locationStart = rangeStart.location;
-                    nativeUrl = [nativeUrl substringFromIndex:locationStart];
+    switch(wrap.m_uiMessageType) {
+        case 49: { // AppNode
+            if ([wrap.m_nsContent rangeOfString:@"wxpay://"].location != NSNotFound) { // 红包
+                if (!shouldReceiveRedEnvelop()) {
+                    break;
                 }
                 
-                NSRange rangeEnd = [nativeUrl rangeOfString:@"]]"];
-                if (rangeEnd.location != NSNotFound)
-                {
-                    NSUInteger locationEnd = rangeEnd.location;
-                    nativeUrl = [nativeUrl substringToIndex:locationEnd];
-                }
+                NSDictionary *(^parseNativeUrl)(NSString *nativeUrl) = ^(NSString *nativeUrl) {
+                    nativeUrl = [nativeUrl substringFromIndex:[@"wxpay://c2cbizmessagehandler/hongbao/receivehongbao?" length]];
+                    return [objc_getClass("WCBizUtil") dictionaryWithDecodedComponets:nativeUrl separator:@"&"];
+                };
+                /*
+                 agreeDuty = 0;
+                 channelId = 1;
+                 inWay = 1;
+                 msgType = 1;
+                 nativeUrl = "wxpay://c2cbizmessagehandler/hongbao/receivehongbao?msgtype=1&channelid=1&sendid=1000039501201709047019673006344&sendusername=ljl4323108&ver=6&sign=99690d3a66ff93739b339d1e1fc71ec12f026f3e34a0806aec19f05f6ab09c9604e4a5a63eef95b25b87cff49fa5bd0d87e46e8a35eca8189fc1020479fc23ad04c00ab0ca78ede59440ed8c63da189b60df7e8f9c7795ca43d1a78410f4ab47";
+                 wxpay://c2cbizmessagehandler/hongbao/receivehongbao?msgtype=1&channelid=1&sendid=1000039501201709047018482497054&sendusername=ljl4323108&ver=6&sign=4bee27fc5aeec1399701f05959a48100fbd01fb263d295dd29e13129b8d94c8939232ee668a1e68bf164ee9bead0f4ff14001333427f3a653519efa1578d6f74b7ee48ba20034727fb1c64105b91153c0891f0f29c979437c46f9e9b289a14a8
+                 sendId = 1000039501201709047019673006344;
+                 */
+                /** 获取服务端验证参数 */
+                void (^queryRedEnvelopesReqeust)(NSDictionary *nativeUrlDict) = ^(NSDictionary *nativeUrlDict) {
+                    NSMutableDictionary *params = [@{} mutableCopy];
+                    params[@"agreeDuty"] = @"0";
+                    params[@"channelId"] = [nativeUrlDict stringForKey:@"channelid"];
+                    params[@"inWay"] = @"0";
+                    params[@"msgType"] = [nativeUrlDict stringForKey:@"msgtype"];
+                    params[@"nativeUrl"] = [[wrap m_oWCPayInfoItem] m_c2cNativeUrl];
+                    params[@"sendId"] = [nativeUrlDict stringForKey:@"sendid"];
+                    
+                    WCRedEnvelopesLogicMgr *logicMgr = [[objc_getClass("MMServiceCenter") defaultCenter] getService:[objc_getClass("WCRedEnvelopesLogicMgr") class]];
+                    [logicMgr ReceiverQueryRedEnvelopesRequest:params];
+                };
                 
-                NSString *naUrl = [nativeUrl substringFromIndex:[@"wxpay://c2cbizmessagehandler/hongbao/receivehongbao?" length]];
+                /** 储存参数 */
+                void (^enqueueParam)(NSDictionary *nativeUrlDict) = ^(NSDictionary *nativeUrlDict) {
+                    WeChatRedEnvelopParam *mgrParams = [[WeChatRedEnvelopParam alloc] init];
+                    mgrParams.msgType = [nativeUrlDict stringForKey:@"msgtype"];
+                    mgrParams.sendId = [nativeUrlDict stringForKey:@"sendid"];
+                    mgrParams.channelId = [nativeUrlDict stringForKey:@"channelid"];
+                    mgrParams.nickName = [selfContact getContactDisplayName];
+                    mgrParams.headImg = [selfContact m_nsHeadImgUrl];
+                    mgrParams.nativeUrl = [[wrap m_oWCPayInfoItem] m_c2cNativeUrl];
+                    mgrParams.sessionUserName = isChatroomSenderSelf ? wrap.m_nsToUsr : wrap.m_nsFromUsr;
+                    mgrParams.sign = [nativeUrlDict stringForKey:@"sign"];
+                    
+                    mgrParams.isGroupSender = isChatroomSenderSelf;
+                    
+                    [[WeChatRedEnvelopManager sharedManager].redEnvelopParams addObject:mgrParams];
+                };
                 
-                NSArray *parameterPairs =[naUrl componentsSeparatedByString:@"&"];
+                NSString *nativeUrl = [[wrap m_oWCPayInfoItem] m_c2cNativeUrl];
+                NSDictionary *nativeUrlDict = parseNativeUrl(nativeUrl);
                 
-                NSMutableDictionary *parameters = [NSMutableDictionary dictionaryWithCapacity:[parameterPairs count]];
-                for (NSString *currentPair in parameterPairs) {
-                    NSRange range = [currentPair rangeOfString:@"="];
-                    if(range.location == NSNotFound)
-                        continue;
-                    NSString *key = [currentPair substringToIndex:range.location];
-                    NSString *value =[currentPair substringFromIndex:range.location + 1];
-                    [parameters setObject:value forKey:key];
-                }
-                
-                //红包参数
-                NSMutableDictionary *params = [@{} mutableCopy];
-                
-                [params setObject:parameters[@"msgtype"]?:@"null" forKey:@"msgType"];
-                [params setObject:parameters[@"sendid"]?:@"null" forKey:@"sendId"];
-                [params setObject:parameters[@"channelid"]?:@"null" forKey:@"channelId"];
-                
-                id getContactDisplayName = objc_msgSend(selfContact, @selector(getContactDisplayName));
-                id m_nsHeadImgUrl = objc_msgSend(selfContact, @selector(m_nsHeadImgUrl));
-                
-                [params setObject:getContactDisplayName forKey:@"nickName"];
-                [params setObject:m_nsHeadImgUrl forKey:@"headImg"];
-                [params setObject:[NSString stringWithFormat:@"%@", nativeUrl]?:@"null" forKey:@"nativeUrl"];
-                [params setObject:m_nsFromUsr?:@"null" forKey:@"sessionUserName"];
-                
-                if (HELPER_SETTING.redEnvPluginDelay > 0) {
-                    [logicMgr performSelector:@selector(OpenRedEnvelopesRequest:) withObject:params afterDelay:HELPER_SETTING.redEnvPluginDelay];
-                }else if (HELPER_SETTING.redEnvPluginDelay < 0) {
-                    int index = arc4random() % WeChatHelperDelayTimes.count;
-                    double delay = [WeChatHelperDelayTimes[index] doubleValue];
-                    [logicMgr performSelector:@selector(OpenRedEnvelopesRequest:) withObject:params afterDelay:delay];
-                }else{
-                    ((void (*)(id, SEL, NSMutableDictionary*))objc_msgSend)(logicMgr, @selector(OpenRedEnvelopesRequest:), params);
-                }
-                return;
+                queryRedEnvelopesReqeust(nativeUrlDict);
+                enqueueParam(nativeUrlDict);
             }
             break;
         }
@@ -221,12 +249,107 @@ CHMethod2(void, CMessageMgr, AsyncOnAddMsg, id, arg1, MsgWrap, id, arg2) {
     }
 }
 
-CHMethod1(void, CMessageMgr, onRevokeMsg, id, arg1) {
-    if (!HELPER_SETTING.forbidRevokeIsOn) {
-        CHSuper1(CMessageMgr, onRevokeMsg, arg1);
+CHDeclareClass(WCRedEnvelopesLogicMgr);
+CHMethod2(void, WCRedEnvelopesLogicMgr, OnWCToHongbaoCommonResponse, HongBaoRes*, arg1, Request, HongBaoReq*, arg2) {
+    
+    CHSuper2(WCRedEnvelopesLogicMgr, OnWCToHongbaoCommonResponse, arg1, Request, arg2);
+    // 非参数查询请求
+    if (arg1.cgiCmdid != 3) { return; }
+    
+    NSString *(^parseRequestSign)() = ^NSString *() {
+        NSString *requestString = [[NSString alloc] initWithData:arg2.reqText.buffer encoding:NSUTF8StringEncoding];
+        NSDictionary *requestDictionary = [objc_getClass("WCBizUtil") dictionaryWithDecodedComponets:requestString separator:@"&"];
+        NSString *nativeUrl = [[requestDictionary stringForKey:@"nativeUrl"] stringByRemovingPercentEncoding];
+        NSDictionary *nativeUrlDict = [objc_getClass("WCBizUtil") dictionaryWithDecodedComponets:nativeUrl separator:@"&"];
+        
+        return [nativeUrlDict stringForKey:@"sign"];
+    };
+    
+    NSDictionary *responseDict = [[[NSString alloc] initWithData:arg1.retText.buffer encoding:NSUTF8StringEncoding] JSONDictionary];
+    
+    WeChatRedEnvelopParam *mgrParams = [[WeChatRedEnvelopManager sharedManager] paramWithSign:parseRequestSign()];
+    
+    BOOL (^shouldReceiveRedEnvelop)() = ^BOOL() {
+        
+        // 手动抢红包
+        if (!mgrParams) { return NO; }
+        
+        // 自己已经抢过
+        if ([responseDict[@"receiveStatus"] integerValue] == 2) { return NO; }
+        
+        // 红包被抢完
+        if ([responseDict[@"hbStatus"] integerValue] == 4) { return NO; }
+        
+        // 没有这个字段会被判定为使用外挂
+        if (!responseDict[@"timingIdentifier"]) { return NO; }
+        
+        return HELPER_SETTING.redEnvPluginIsOn;
+    };
+    
+    if (shouldReceiveRedEnvelop()) {
+        mgrParams.timingIdentifier = responseDict[@"timingIdentifier"];
+        
+        NSTimeInterval delay = 0;
+        if (HELPER_SETTING.redEnvPluginDelay > 0) {
+            delay = HELPER_SETTING.redEnvPluginDelay;
+        }else if (HELPER_SETTING.redEnvPluginDelay < 0) {
+            int index = arc4random() % WeChatHelperDelayTimes.count;
+            delay = [WeChatHelperDelayTimes[index] doubleValue];
+        }
+        WeChatRedEnvelopOperation *operation = [[WeChatRedEnvelopOperation alloc] initWithParam:mgrParams delay:delay];
+        [[WeChatRedEnvelopManager sharedManager] addSerialTask:operation];
     }
 }
 
+// 防止消息撤回
+CHOptimizedMethod1(self, void, CMessageMgr, onRevokeMsg, CMessageWrap *, arg1) {
+    if (!HELPER_SETTING.forbidRevokeIsOn) {
+        CHSuper1(CMessageMgr, onRevokeMsg, arg1);
+    }else{
+        if ([arg1.m_nsContent rangeOfString:@"<session>"].location == NSNotFound) { return; }
+        if ([arg1.m_nsContent rangeOfString:@"<replacemsg>"].location == NSNotFound) { return; }
+        
+        NSString *(^parseSession)() = ^NSString *() {
+            NSUInteger startIndex = [arg1.m_nsContent rangeOfString:@"<session>"].location + @"<session>".length;
+            NSUInteger endIndex = [arg1.m_nsContent rangeOfString:@"</session>"].location;
+            NSRange range = NSMakeRange(startIndex, endIndex - startIndex);
+            return [arg1.m_nsContent substringWithRange:range];
+        };
+        
+        NSString *(^parseSenderName)() = ^NSString *() {
+            NSRegularExpression *regex = [NSRegularExpression regularExpressionWithPattern:@"<!\\[CDATA\\[(.*?)撤回了一条消息\\]\\]>" options:NSRegularExpressionCaseInsensitive error:nil];
+            
+            NSRange range = NSMakeRange(0, arg1.m_nsContent.length);
+            NSTextCheckingResult *result = [regex matchesInString:arg1.m_nsContent options:0 range:range].firstObject;
+            if (result.numberOfRanges < 2) { return nil; }
+            
+            return [arg1.m_nsContent substringWithRange:[result rangeAtIndex:1]];
+        };
+        
+        CMessageWrap *msgWrap = [[objc_getClass("CMessageWrap") alloc] initWithMsgType:0x2710];
+        BOOL isSender = [objc_getClass("CMessageWrap") isSenderFromMsgWrap:arg1];
+        
+        NSString *sendContent;
+        if (isSender) {
+            [msgWrap setM_nsFromUsr:arg1.m_nsToUsr];
+            [msgWrap setM_nsToUsr:arg1.m_nsFromUsr];
+            sendContent = @"你撤回了一条消息";
+        } else {
+            [msgWrap setM_nsToUsr:arg1.m_nsToUsr];
+            [msgWrap setM_nsFromUsr:arg1.m_nsFromUsr];
+            
+            NSString *name = parseSenderName();
+            sendContent = [NSString stringWithFormat:@"拦截 %@ 的一条撤回消息", name ? name : arg1.m_nsFromUsr];
+        }
+        [msgWrap setM_uiStatus:0x4];
+        [msgWrap setM_nsContent:sendContent];
+        [msgWrap setM_uiCreateTime:[arg1 m_uiCreateTime]];
+        
+        [self AddLocalMsg:parseSession() MsgWrap:msgWrap fixTime:0x1 NewMsgArriveNotify:0x0];
+    }
+}
+
+// 地理位置伪装
 CHDeclareClass(SeePeopleNearByLogicController);
 
 CHMethod1(void, SeePeopleNearByLogicController, onRetrieveLocationOK, id, arg1) {
@@ -247,6 +370,7 @@ CHMethod1(void, WCTimelinePOIPickerViewController, onRetrieveLocationOK, id, arg
     }
 }
 
+// 微信步数
 CHDeclareClass(WCDeviceStepObject);
 
 CHMethod0(NSInteger, WCDeviceStepObject, hkStepCount) {
@@ -268,27 +392,29 @@ CHMethod0(NSInteger, WCDeviceStepObject, m7StepCount) {
 CHConstructor {
     @autoreleasepool {
         CHLoadLateClass(MicroMessengerAppDelegate);
-        CHClassHook1(MicroMessengerAppDelegate, applicationDidBecomeActive);
-        CHClassHook1(MicroMessengerAppDelegate, applicationWillResignActive);
-        CHClassHook1(MicroMessengerAppDelegate, applicationDidEnterBackground);
-        CHClassHook1(MicroMessengerAppDelegate, applicationWillEnterForeground);
-        CHLoadLateClass(MMUIViewController);
-        CHClassHook1(MMUIViewController, viewDidAppear);
+        CHHook2(MicroMessengerAppDelegate, application, didFinishLaunchingWithOptions);
+        CHHook1(MicroMessengerAppDelegate, applicationDidBecomeActive);
+        CHHook1(MicroMessengerAppDelegate, applicationWillResignActive);
+        CHHook1(MicroMessengerAppDelegate, applicationDidEnterBackground);
+        CHHook1(MicroMessengerAppDelegate, applicationWillEnterForeground);
         CHLoadLateClass(FindFriendEntryViewController);
-        CHClassHook1(FindFriendEntryViewController, numberOfSectionsInTableView);
-        CHClassHook2(FindFriendEntryViewController, tableView, cellForRowAtIndexPath);
-        CHClassHook2(FindFriendEntryViewController, tableView, numberOfRowsInSection);
-        CHClassHook2(FindFriendEntryViewController, tableView, didSelectRowAtIndexPath);
+        CHHook1(FindFriendEntryViewController, numberOfSectionsInTableView);
+        CHHook2(FindFriendEntryViewController, tableView, cellForRowAtIndexPath);
+        CHHook2(FindFriendEntryViewController, tableView, numberOfRowsInSection);
+        CHHook2(FindFriendEntryViewController, tableView, didSelectRowAtIndexPath);
         CHLoadLateClass(CMessageMgr);
-        CHClassHook2(CMessageMgr, AsyncOnAddMsg, MsgWrap);
-        CHClassHook1(CMessageMgr, onRevokeMsg);
+        CHHook2(CMessageMgr, AsyncOnAddMsg, MsgWrap);
+        CHHook1(CMessageMgr, onRevokeMsg);
+        CHHook2(CMessageMgr, AddMsg, MsgWrap);
         CHLoadLateClass(SeePeopleNearByLogicController);
         CHHook1(SeePeopleNearByLogicController, onRetrieveLocationOK);
         CHLoadLateClass(WCTimelinePOIPickerViewController);
-        CHClassHook1(WCTimelinePOIPickerViewController, onRetrieveLocationOK);
+        CHHook1(WCTimelinePOIPickerViewController, onRetrieveLocationOK);
         CHLoadLateClass(WCDeviceStepObject);
         CHHook0(WCDeviceStepObject, hkStepCount);
         CHHook0(WCDeviceStepObject, m7StepCount);
+        CHLoadLateClass(WCRedEnvelopesLogicMgr);
+        CHHook2(WCRedEnvelopesLogicMgr, OnWCToHongbaoCommonResponse, Request);
     }
 }
 

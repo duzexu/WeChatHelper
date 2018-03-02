@@ -12,6 +12,15 @@
 		BE7B0A2E1DD46AE700B4EAE9 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE7B0A2D1DD46AE700B4EAE9 /* UIKit.framework */; };
 		BE7B0A3A1DD46AE700B4EAE9 /* WeChatHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = BE7B0A391DD46AE700B4EAE9 /* WeChatHelper.m */; };
 		BE7B0A441DD46AF700B4EAE9 /* CaptainHook.h in Headers */ = {isa = PBXBuildFile; fileRef = BE7B0A431DD46AF700B4EAE9 /* CaptainHook.h */; };
+		BEABC4C92048F1D100C7B7D8 /* WeChatRedEnvelopOperation.h in Headers */ = {isa = PBXBuildFile; fileRef = BEABC4C02048F1D000C7B7D8 /* WeChatRedEnvelopOperation.h */; };
+		BEABC4CA2048F1D100C7B7D8 /* WeChatMultiSelectController.h in Headers */ = {isa = PBXBuildFile; fileRef = BEABC4C12048F1D000C7B7D8 /* WeChatMultiSelectController.h */; };
+		BEABC4CB2048F1D100C7B7D8 /* WeChatRedEnvelopParam.h in Headers */ = {isa = PBXBuildFile; fileRef = BEABC4C22048F1D000C7B7D8 /* WeChatRedEnvelopParam.h */; };
+		BEABC4CC2048F1D100C7B7D8 /* WeChatRedEnvelopParam.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABC4C32048F1D000C7B7D8 /* WeChatRedEnvelopParam.m */; };
+		BEABC4CD2048F1D100C7B7D8 /* WeChatMultiSelectController.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABC4C42048F1D000C7B7D8 /* WeChatMultiSelectController.m */; };
+		BEABC4CE2048F1D100C7B7D8 /* WeChatHeader.h in Headers */ = {isa = PBXBuildFile; fileRef = BEABC4C52048F1D100C7B7D8 /* WeChatHeader.h */; };
+		BEABC4CF2048F1D100C7B7D8 /* WeChatRedEnvelopManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BEABC4C62048F1D100C7B7D8 /* WeChatRedEnvelopManager.h */; };
+		BEABC4D02048F1D100C7B7D8 /* WeChatRedEnvelopManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABC4C72048F1D100C7B7D8 /* WeChatRedEnvelopManager.m */; };
+		BEABC4D12048F1D100C7B7D8 /* WeChatRedEnvelopOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABC4C82048F1D100C7B7D8 /* WeChatRedEnvelopOperation.m */; };
 		BEDE82A51DD56CB00077A272 /* WeChatHelperController.h in Headers */ = {isa = PBXBuildFile; fileRef = BEDE82A31DD56CB00077A272 /* WeChatHelperController.h */; };
 		BEDE82A61DD56CB00077A272 /* WeChatHelperController.m in Sources */ = {isa = PBXBuildFile; fileRef = BEDE82A41DD56CB00077A272 /* WeChatHelperController.m */; };
 		BEDE82A91DD58A940077A272 /* WeChatHelperSetting.h in Headers */ = {isa = PBXBuildFile; fileRef = BEDE82A71DD58A940077A272 /* WeChatHelperSetting.h */; };
@@ -34,6 +43,15 @@
 		BE7B0A391DD46AE700B4EAE9 /* WeChatHelper.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WeChatHelper.m; sourceTree = "<group>"; };
 		BE7B0A3D1DD46AE700B4EAE9 /* 0xdeadfa11 */ = {isa = PBXFileReference; lastKnownFileType = text; name = 0xdeadfa11; path = Package/usr/lib/0xdeadfa11; sourceTree = "<group>"; };
 		BE7B0A431DD46AF700B4EAE9 /* CaptainHook.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CaptainHook.h; sourceTree = "<group>"; };
+		BEABC4C02048F1D000C7B7D8 /* WeChatRedEnvelopOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatRedEnvelopOperation.h; sourceTree = "<group>"; };
+		BEABC4C12048F1D000C7B7D8 /* WeChatMultiSelectController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatMultiSelectController.h; sourceTree = "<group>"; };
+		BEABC4C22048F1D000C7B7D8 /* WeChatRedEnvelopParam.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatRedEnvelopParam.h; sourceTree = "<group>"; };
+		BEABC4C32048F1D000C7B7D8 /* WeChatRedEnvelopParam.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeChatRedEnvelopParam.m; sourceTree = "<group>"; };
+		BEABC4C42048F1D000C7B7D8 /* WeChatMultiSelectController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeChatMultiSelectController.m; sourceTree = "<group>"; };
+		BEABC4C52048F1D100C7B7D8 /* WeChatHeader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatHeader.h; sourceTree = "<group>"; };
+		BEABC4C62048F1D100C7B7D8 /* WeChatRedEnvelopManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatRedEnvelopManager.h; sourceTree = "<group>"; };
+		BEABC4C72048F1D100C7B7D8 /* WeChatRedEnvelopManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeChatRedEnvelopManager.m; sourceTree = "<group>"; };
+		BEABC4C82048F1D100C7B7D8 /* WeChatRedEnvelopOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeChatRedEnvelopOperation.m; sourceTree = "<group>"; };
 		BEDE82A31DD56CB00077A272 /* WeChatHelperController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatHelperController.h; sourceTree = "<group>"; };
 		BEDE82A41DD56CB00077A272 /* WeChatHelperController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeChatHelperController.m; sourceTree = "<group>"; };
 		BEDE82A71DD58A940077A272 /* WeChatHelperSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatHelperSetting.h; sourceTree = "<group>"; };
@@ -100,6 +118,15 @@
 				BEDE82D71DD5D3490077A272 /* WeChatMapController.m */,
 				BEDE82A71DD58A940077A272 /* WeChatHelperSetting.h */,
 				BEDE82A81DD58A940077A272 /* WeChatHelperSetting.m */,
+				BEABC4C52048F1D100C7B7D8 /* WeChatHeader.h */,
+				BEABC4C12048F1D000C7B7D8 /* WeChatMultiSelectController.h */,
+				BEABC4C42048F1D000C7B7D8 /* WeChatMultiSelectController.m */,
+				BEABC4C62048F1D100C7B7D8 /* WeChatRedEnvelopManager.h */,
+				BEABC4C72048F1D100C7B7D8 /* WeChatRedEnvelopManager.m */,
+				BEABC4C02048F1D000C7B7D8 /* WeChatRedEnvelopOperation.h */,
+				BEABC4C82048F1D100C7B7D8 /* WeChatRedEnvelopOperation.m */,
+				BEABC4C22048F1D000C7B7D8 /* WeChatRedEnvelopParam.h */,
+				BEABC4C32048F1D000C7B7D8 /* WeChatRedEnvelopParam.m */,
 				BE7B0A301DD46AE700B4EAE9 /* Package */,
 				BE7B0A341DD46AE700B4EAE9 /* Supporting Files */,
 			);
@@ -157,8 +184,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				BEDE82A51DD56CB00077A272 /* WeChatHelperController.h in Headers */,
+				BEABC4CE2048F1D100C7B7D8 /* WeChatHeader.h in Headers */,
 				BEDE82D81DD5D3490077A272 /* WeChatMapController.h in Headers */,
+				BEABC4CF2048F1D100C7B7D8 /* WeChatRedEnvelopManager.h in Headers */,
+				BEABC4CA2048F1D100C7B7D8 /* WeChatMultiSelectController.h in Headers */,
 				BE7B0A441DD46AF700B4EAE9 /* CaptainHook.h in Headers */,
+				BEABC4C92048F1D100C7B7D8 /* WeChatRedEnvelopOperation.h in Headers */,
+				BEABC4CB2048F1D100C7B7D8 /* WeChatRedEnvelopParam.h in Headers */,
 				BEDE82A91DD58A940077A272 /* WeChatHelperSetting.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -238,9 +270,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				BE7B0A3A1DD46AE700B4EAE9 /* WeChatHelper.m in Sources */,
+				BEABC4D02048F1D100C7B7D8 /* WeChatRedEnvelopManager.m in Sources */,
 				BEDE82A61DD56CB00077A272 /* WeChatHelperController.m in Sources */,
+				BEABC4CC2048F1D100C7B7D8 /* WeChatRedEnvelopParam.m in Sources */,
 				BEDE82D91DD5D3490077A272 /* WeChatMapController.m in Sources */,
 				BEDE82AA1DD58A940077A272 /* WeChatHelperSetting.m in Sources */,
+				BEABC4CD2048F1D100C7B7D8 /* WeChatMultiSelectController.m in Sources */,
+				BEABC4D12048F1D100C7B7D8 /* WeChatRedEnvelopOperation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,6 +339,7 @@
 		BE7B0A411DD46AE700B4EAE9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEVELOPMENT_TEAM = S6ZSA2VV9P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -326,6 +363,7 @@
 		BE7B0A421DD46AE700B4EAE9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEVELOPMENT_TEAM = S6ZSA2VV9P;
 				DYLIB_COMPATIBILITY_VERSION = 1;

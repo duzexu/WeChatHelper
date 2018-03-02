@@ -9,8 +9,11 @@
 #import "WeChatHelperController.h"
 #import "WeChatHelperSetting.h"
 #import "WeChatMapController.h"
+#import "WeChatRedEnvelopManager.h"
+#import "WeChatMultiSelectController.h"
+#import "WeChatHeader.h"
 
-@interface WeChatHelperController ()<UITableViewDelegate,UITableViewDataSource,UIAlertViewDelegate>
+@interface WeChatHelperController ()<UITableViewDelegate,UITableViewDataSource,UIAlertViewDelegate,WeChatMultiSelectDelegate>
 
 @property (nonatomic, strong) UITableView *tableView;
 
@@ -84,7 +87,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     switch (section) {
         case 0:
-            return 3;
+            return 4;
             break;
         case 1:
             return _delayTimes.count;
@@ -108,7 +111,7 @@
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
     if (!cell) {
         Class class = NSClassFromString(@"MMTableViewCell");
-        cell = [[class alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"cell"];
+        cell = [[class alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"cell"];
     }
     cell.selectionStyle= UITableViewCellSelectionStyleNone;
     switch (indexPath.section) {
@@ -124,9 +127,17 @@
             }else if (indexPath.row == 1) {
                 cell.textLabel.text = @"抢自己的红包";
                 switchButton.on = HELPER_SETTING.redEnvPluginForMyself;
-            }else{
+            }else if (indexPath.row == 2) {
                 cell.textLabel.text = @"后台运行";
                 switchButton.on = HELPER_SETTING.runInBackGround;
+            }else {
+                cell.accessoryView = nil;
+                cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+                cell.textLabel.text = @"群聊过滤";
+                if (HELPER_SETTING.redEnvBlackList.count > 0) {
+                    NSString *blackListCountStr = [NSString stringWithFormat:@"已选 %lu 个群", (unsigned long)HELPER_SETTING.redEnvBlackList.count];
+                    cell.detailTextLabel.text = blackListCountStr;
+                }
             }
         }
             break;
@@ -204,6 +215,11 @@
 #pragma mark - UITableView Delegate
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (indexPath.section == 0 && indexPath.row == 3) {
+        WeChatMultiSelectController *vc = [[WeChatMultiSelectController alloc] initWithBlackList:HELPER_SETTING.redEnvBlackList];
+        vc.delegate = self;
+        [self.navigationController pushViewController:vc animated:YES];
+    }
     if (indexPath.section == 1) {
         NSNumber *time = _delayTimes[indexPath.row];
         HELPER_SETTING.redEnvPluginDelay = time.doubleValue;
@@ -224,6 +240,12 @@
         alert.delegate = self;
         [alert show];
     }
+}
+
+#pragma mark - WeChatMultiSelectDelegate
+- (void)onMultiSelectGroupReturn:(NSArray *)arg1 {
+    HELPER_SETTING.redEnvBlackList = arg1;
+    [_tableView reloadData];
 }
 
 #pragma mark - UIAlertViewDelegate
