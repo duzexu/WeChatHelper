@@ -31,5 +31,8 @@ codesign -f -s "iPhone Developer: zexu du (95WX4JLF9D)" libWeChatHelper.dylib
 sigh resign wx.ipa --signing_identity D125587E195E673583C2A9BC436DFE26398B7E74 -p com.tencent.xin.sharetimeline=WeChatToday.mobileprovision -p com.tencent.xin.watchapp.watchkitextension=WeChatWatchExtension.mobileprovision -p com.tencent.xin.watchapp=WeChatWatch.mobileprovision -p com.tencent.xin=WeChat.mobileprovision newwx.ipa
 ```
 
+###自动跳一跳
+[自动跳一跳](./AutoJumpInWX/AutoJumpInWX.md)
+
 ###参考
 [一步一步实现iOS微信自动抢红包(非越狱)](http://www.jianshu.com/p/189afbe3b429)

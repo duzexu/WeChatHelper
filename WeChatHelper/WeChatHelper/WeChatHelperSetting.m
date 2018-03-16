@@ -52,6 +52,7 @@
     [aCoder encodeBool:_forbidRevokeIsOn forKey:@"forbidRevokeIsOn"];
     [aCoder encodeBool:_fakeStepPluginIsOn forKey:@"fakeStepPluginIsOn"];
     [aCoder encodeInteger:_fakeStepCount forKey:@"fakeStepCount"];
+    [aCoder encodeBool:_shakeJump forKey:@"shakeJump"];
 }
 
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder {
@@ -68,6 +69,7 @@
         _forbidRevokeIsOn = [aDecoder decodeBoolForKey:@"forbidRevokeIsOn"];
         _fakeStepPluginIsOn = [aDecoder decodeBoolForKey:@"fakeStepPluginIsOn"];
         _fakeStepCount = [aDecoder decodeIntegerForKey:@"fakeStepCount"];
+        _shakeJump = [aDecoder decodeBoolForKey:@"shakeJump"];
     }
     return self;
 }

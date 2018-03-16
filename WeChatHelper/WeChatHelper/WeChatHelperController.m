@@ -78,10 +78,14 @@
     HELPER_SETTING.fakeStepPluginIsOn = !HELPER_SETTING.fakeStepPluginIsOn;
 }
 
+- (void)jumpAction:(UISwitch *)sender {
+    HELPER_SETTING.shakeJump = !HELPER_SETTING.shakeJump;
+}
+
 #pragma mark - UITableView Datasource
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView; {
-    return 5;
+    return 6;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -100,6 +104,9 @@
             break;
         case 4:
             return 2;
+            break;
+        case 5:
+            return 1;
             break;
         default:
             return 0;
@@ -192,6 +199,14 @@
                 cell.accessoryView = nil;
                 cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             }
+        }
+            break;
+        case 5:{
+            UISwitch *switchButton = [UISwitch new];
+            [switchButton addTarget:self action:@selector(jumpAction:) forControlEvents:UIControlEventValueChanged];
+            cell.accessoryView = switchButton;
+            cell.textLabel.text = @"摇手机自动跳一跳";
+            switchButton.on = HELPER_SETTING.shakeJump;
         }
             break;
         default:

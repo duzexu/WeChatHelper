@@ -32,6 +32,8 @@ static NSString *const kUserDefault_Helper_Setting = @"kUserDefault_Helper_Setti
 @property (nonatomic, assign) BOOL fakeStepPluginIsOn;//微信运动步数
 @property (nonatomic, assign) NSInteger fakeStepCount;
 
+@property (nonatomic, assign) BOOL shakeJump;//摇一摇跳一跳
+
 + (instancetype)sharedSetting;
 - (void)saveSetting;
 

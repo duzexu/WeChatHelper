@@ -13,6 +13,7 @@
 #import "WeChatHelperController.h"
 #import "WeChatHelperSetting.h"
 #import "WeChatRedEnvelopManager.h"
+#import "WeChatJumpManager.h"
 
 BOOL __addMethod(Class clazz, SEL sel, IMP function) {
     NSString *selName = NSStringFromSelector(sel);
@@ -36,6 +37,24 @@ BOOL __addMethod(Class clazz, SEL sel, IMP function) {
 NSString* bundleIdentifierFunction(id target, SEL cmd) {
     return @"com.tencent.xin";
 }
+
+@interface UIWindow (Shake)
+@end
+
+@implementation UIWindow (Shake)
+-(void)motionEnded:(UIEventSubtype)motion withEvent:(UIEvent *)event {
+    if (motion == UIEventSubtypeMotionShake) {
+        WeChatJumpManager *manager = [WeChatJumpManager sharedManager];
+        if (manager.isJumping) {
+            [manager stopJump];
+        }else{
+            if (HELPER_SETTING.shakeJump) {
+                [manager startJump];
+            }
+        }
+    }
+}
+@end
 
 // 代理
 CHDeclareClass(MicroMessengerAppDelegate);
@@ -132,7 +151,7 @@ CHMethod2(void, FindFriendEntryViewController, tableView, UITableView *, tb, did
 CHDeclareClass(CMessageMgr);
 
 //MARK: At all
-CHMethod2(void, CMessageMgr, AddMsg, id, arg1, MsgWrap, CMessageWrap *, wrap){
+CHMethod2(void, CMessageMgr, AddMsg, id, arg1, MsgWrap, CMessageWrap *, wrap) {
     NSUInteger type = wrap.m_uiMessageType;
     NSString *mFromUser = wrap.m_nsFromUsr;
     NSString *mToUsr = wrap.m_nsToUsr;
@@ -140,10 +159,10 @@ CHMethod2(void, CMessageMgr, AddMsg, id, arg1, MsgWrap, CMessageWrap *, wrap){
     NSString *mSource = wrap.m_nsMsgSource;
     CContactMgr *contactManager = [[objc_getClass("MMServiceCenter") defaultCenter] getService:[objc_getClass("CContactMgr") class]];
     CContact *selfContact = [contactManager getSelfContact];
-    if (type == 1){
+    if (type == 1) {
         if ([mFromUser isEqualToString:selfContact.m_nsUsrName]) {
             if ([mToUsr hasSuffix:@"@chatroom"]) {
-                if(!mSource){
+                if(!mSource) {
                     NSArray *result = (NSArray *)[objc_getClass("CContact") getChatRoomMemberWithoutMyself:mToUsr];
                     if ([mContent hasPrefix:@"#所有人"]){
                         // 前缀要求
