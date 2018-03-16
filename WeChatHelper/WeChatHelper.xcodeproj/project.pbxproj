@@ -21,6 +21,12 @@
 		BEABC4CF2048F1D100C7B7D8 /* WeChatRedEnvelopManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BEABC4C62048F1D100C7B7D8 /* WeChatRedEnvelopManager.h */; };
 		BEABC4D02048F1D100C7B7D8 /* WeChatRedEnvelopManager.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABC4C72048F1D100C7B7D8 /* WeChatRedEnvelopManager.m */; };
 		BEABC4D12048F1D100C7B7D8 /* WeChatRedEnvelopOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = BEABC4C82048F1D100C7B7D8 /* WeChatRedEnvelopOperation.m */; };
+		BEAE4C5C205B97C800DCF1E1 /* WeChatJumpManager.h in Headers */ = {isa = PBXBuildFile; fileRef = BEAE4C5A205B97C700DCF1E1 /* WeChatJumpManager.h */; };
+		BEAE4C5D205B97C800DCF1E1 /* WeChatJumpManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = BEAE4C5B205B97C700DCF1E1 /* WeChatJumpManager.mm */; };
+		BEAE4C63205B980400DCF1E1 /* opencv2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEAE4C5E205B980400DCF1E1 /* opencv2.framework */; };
+		BEAE4C64205B980400DCF1E1 /* FTFakeTouch.a in Frameworks */ = {isa = PBXBuildFile; fileRef = BEAE4C60205B980400DCF1E1 /* FTFakeTouch.a */; };
+		BEAE4C65205B980400DCF1E1 /* FTFakeTouch.h in Headers */ = {isa = PBXBuildFile; fileRef = BEAE4C61205B980400DCF1E1 /* FTFakeTouch.h */; };
+		BEAE4C66205B980400DCF1E1 /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BEAE4C62205B980400DCF1E1 /* IOKit.framework */; };
 		BEDE82A51DD56CB00077A272 /* WeChatHelperController.h in Headers */ = {isa = PBXBuildFile; fileRef = BEDE82A31DD56CB00077A272 /* WeChatHelperController.h */; };
 		BEDE82A61DD56CB00077A272 /* WeChatHelperController.m in Sources */ = {isa = PBXBuildFile; fileRef = BEDE82A41DD56CB00077A272 /* WeChatHelperController.m */; };
 		BEDE82A91DD58A940077A272 /* WeChatHelperSetting.h in Headers */ = {isa = PBXBuildFile; fileRef = BEDE82A71DD58A940077A272 /* WeChatHelperSetting.h */; };
@@ -52,6 +58,12 @@
 		BEABC4C62048F1D100C7B7D8 /* WeChatRedEnvelopManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatRedEnvelopManager.h; sourceTree = "<group>"; };
 		BEABC4C72048F1D100C7B7D8 /* WeChatRedEnvelopManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeChatRedEnvelopManager.m; sourceTree = "<group>"; };
 		BEABC4C82048F1D100C7B7D8 /* WeChatRedEnvelopOperation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeChatRedEnvelopOperation.m; sourceTree = "<group>"; };
+		BEAE4C5A205B97C700DCF1E1 /* WeChatJumpManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatJumpManager.h; sourceTree = "<group>"; };
+		BEAE4C5B205B97C700DCF1E1 /* WeChatJumpManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WeChatJumpManager.mm; sourceTree = "<group>"; };
+		BEAE4C5E205B980400DCF1E1 /* opencv2.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = opencv2.framework; sourceTree = "<group>"; };
+		BEAE4C60205B980400DCF1E1 /* FTFakeTouch.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = FTFakeTouch.a; sourceTree = "<group>"; };
+		BEAE4C61205B980400DCF1E1 /* FTFakeTouch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FTFakeTouch.h; sourceTree = "<group>"; };
+		BEAE4C62205B980400DCF1E1 /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = IOKit.framework; sourceTree = "<group>"; };
 		BEDE82A31DD56CB00077A272 /* WeChatHelperController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatHelperController.h; sourceTree = "<group>"; };
 		BEDE82A41DD56CB00077A272 /* WeChatHelperController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WeChatHelperController.m; sourceTree = "<group>"; };
 		BEDE82A71DD58A940077A272 /* WeChatHelperSetting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WeChatHelperSetting.h; sourceTree = "<group>"; };
@@ -67,7 +79,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BEAE4C63205B980400DCF1E1 /* opencv2.framework in Frameworks */,
 				BE3222081E2DC50C00E62AFD /* AVFoundation.framework in Frameworks */,
+				BEAE4C64205B980400DCF1E1 /* FTFakeTouch.a in Frameworks */,
+				BEAE4C66205B980400DCF1E1 /* IOKit.framework in Frameworks */,
 				BEDE82DC1DD5D58C0077A272 /* CoreLocation.framework in Frameworks */,
 				BEDE82DB1DD5D5750077A272 /* MapKit.framework in Frameworks */,
 				BE7B0A2C1DD46AE700B4EAE9 /* Foundation.framework in Frameworks */,
@@ -110,8 +125,12 @@
 		BE7B0A2F1DD46AE700B4EAE9 /* WeChatHelper */ = {
 			isa = PBXGroup;
 			children = (
+				BEAE4C5F205B980400DCF1E1 /* FTFakeTouch */,
+				BEAE4C5E205B980400DCF1E1 /* opencv2.framework */,
 				BE7B0A431DD46AF700B4EAE9 /* CaptainHook.h */,
 				BE7B0A391DD46AE700B4EAE9 /* WeChatHelper.m */,
+				BEAE4C5A205B97C700DCF1E1 /* WeChatJumpManager.h */,
+				BEAE4C5B205B97C700DCF1E1 /* WeChatJumpManager.mm */,
 				BEDE82A31DD56CB00077A272 /* WeChatHelperController.h */,
 				BEDE82A41DD56CB00077A272 /* WeChatHelperController.m */,
 				BEDE82D61DD5D3490077A272 /* WeChatMapController.h */,
@@ -176,6 +195,16 @@
 			name = lib;
 			sourceTree = "<group>";
 		};
+		BEAE4C5F205B980400DCF1E1 /* FTFakeTouch */ = {
+			isa = PBXGroup;
+			children = (
+				BEAE4C60205B980400DCF1E1 /* FTFakeTouch.a */,
+				BEAE4C61205B980400DCF1E1 /* FTFakeTouch.h */,
+				BEAE4C62205B980400DCF1E1 /* IOKit.framework */,
+			);
+			path = FTFakeTouch;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -187,6 +216,8 @@
 				BEABC4CE2048F1D100C7B7D8 /* WeChatHeader.h in Headers */,
 				BEDE82D81DD5D3490077A272 /* WeChatMapController.h in Headers */,
 				BEABC4CF2048F1D100C7B7D8 /* WeChatRedEnvelopManager.h in Headers */,
+				BEAE4C5C205B97C800DCF1E1 /* WeChatJumpManager.h in Headers */,
+				BEAE4C65205B980400DCF1E1 /* FTFakeTouch.h in Headers */,
 				BEABC4CA2048F1D100C7B7D8 /* WeChatMultiSelectController.h in Headers */,
 				BE7B0A441DD46AF700B4EAE9 /* CaptainHook.h in Headers */,
 				BEABC4C92048F1D100C7B7D8 /* WeChatRedEnvelopOperation.h in Headers */,
@@ -269,6 +300,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BEAE4C5D205B97C800DCF1E1 /* WeChatJumpManager.mm in Sources */,
 				BE7B0A3A1DD46AE700B4EAE9 /* WeChatHelper.m in Sources */,
 				BEABC4D02048F1D100C7B7D8 /* WeChatRedEnvelopManager.m in Sources */,
 				BEDE82A61DD56CB00077A272 /* WeChatHelperController.m in Sources */,
@@ -344,11 +376,21 @@
 				DEVELOPMENT_TEAM = S6ZSA2VV9P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_BITCODE = NO;
 				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/WeChatHelper",
+					"$(PROJECT_DIR)/WeChatHelper/FTFakeTouch",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WeChatHelper/WeChatHelper-Prefix.pch";
 				INSTALL_PATH = /usr/lib;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/WeChatHelper/FTFakeTouch",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				iOSOpenDevBuildPackageOnAnyBuild = NO;
 				iOSOpenDevCopyOnBuild = NO;
@@ -368,11 +410,21 @@
 				DEVELOPMENT_TEAM = S6ZSA2VV9P;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
+				ENABLE_BITCODE = NO;
 				EXECUTABLE_PREFIX = lib;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/WeChatHelper",
+					"$(PROJECT_DIR)/WeChatHelper/FTFakeTouch",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WeChatHelper/WeChatHelper-Prefix.pch";
 				INSTALL_PATH = /usr/lib;
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/WeChatHelper/FTFakeTouch",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				iOSOpenDevBuildPackageOnAnyBuild = NO;
 				iOSOpenDevCopyOnBuild = NO;
