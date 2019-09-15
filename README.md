@@ -28,7 +28,7 @@ codesign -f -s "iPhone Developer: zexu du (95WX4JLF9D)" libWeChatHelper.dylib
 ####7.拷贝进WeChat.app文件夹中，生成ipa
 ####8.用sigh重签名
 ```
-sigh resign wx.ipa --signing_identity D125587E195E673583C2A9BC436DFE26398B7E74 -p com.tencent.xin.sharetimeline=WeChatToday.mobileprovision -p com.tencent.xin.watchapp.watchkitextension=WeChatWatchExtension.mobileprovision -p com.tencent.xin.watchapp=WeChatWatch.mobileprovision -p com.tencent.xin=WeChat.mobileprovision newwx.ipa
+fastlane sigh resign WeChat.ipa --signing_identity D125587E195E673583C2A9BC436DFE26398B7E74 -p com.tencent.xin.sharetimeline=WeChatToday.mobileprovision -p com.tencent.xin.watchapp.watchkitextension=WeChatWatchExtension.mobileprovision -p com.tencent.xin.watchapp=WeChatWatch.mobileprovision -p com.tencent.xin=WeChat.mobileprovision newwx.ipa
 ```
 
 ###自动跳一跳
