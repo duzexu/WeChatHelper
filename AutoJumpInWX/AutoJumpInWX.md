@@ -1,19 +1,26 @@
-#在iPhone上开发微信自动跳一跳插件
+# 在iPhone上开发微信自动跳一跳插件
+
 现在已有的实现方法基本是PC端利用Python来实现的，还得安装很多工具，使用起来非常不方便，这篇文章介绍如何在iOS上利用原生客户端实现自动跳一跳，方便随时使用
 
 ![image](result.gif)
 
-###原理
+### 原理
+
 和PC端实现原理一致，先用系统API进行屏幕截图，利用[OpenCV](https://github.com/opencv/opencv)分析出棋子的位置和目标块的位置，计算出距离乘以系数后得出需要按压的时间，用[FTFakeTouch](https://github.com/devliubo/FTFakeTouch)模拟相应的按压事件就行了
 
-###如何进行不越狱插件开发
+### 如何进行不越狱插件开发
+
 关于这部分，有很多相关的框架，例如[IPAPatch](https://github.com/Naituw/IPAPatch)或者[MonkeyDev](https://github.com/AloneMonkey/MonkeyDev)，这里就不在过多介绍了，可以参考相应的文章或者项目简介
 
-###1.搭建环境
-本例子采用的是IPAPatch，我们先取得微信的砸壳文件(自己砸壳或者从越狱渠道下载都行)，然后下载IPAPatch Demo工程，替换Assets文件夹下的app.iap为微信的iap砸壳文件，下载OpenCV代码编译为opencv2.framework添加入工程，下载FTFakeTouch工程编译成FTFakeTouch.a库添加入工程，新建WeChatJumpManager类添加入工程来作为我们实现相关功能的类，这样准备工作就完成了
+### 实现步骤
 
-###2.触发方法
-我们采用摇一摇的方式开启自动跳的功能，所以添加UIWindow的Category监听系统的摇一摇事件
+##### 1.搭建环境
+
+本例子采用的是`IPAPatch`，我们先取得微信的砸壳文件(自己砸壳或者从越狱渠道下载都行)，然后下载IPAPatch Demo工程，替换`Assets`文件夹下的app.iap为微信的iap砸壳文件，下载`OpenCV`代码编译为`opencv2.framework`添加入工程，下载`FTFakeTouch`工程编译成`FTFakeTouch.a`库添加入工程，新建`WeChatJumpManager`类添加入工程来作为我们实现相关功能的类，这样准备工作就完成了
+
+##### 2.触发方法
+
+我们采用摇一摇的方式开启自动跳的功能，所以添加`UIWindow`的`Category`监听系统的摇一摇事件
 
 ```
 @implementation UIWindow (Shake)
@@ -25,7 +32,8 @@
 @end
 ```
 
-###3.截图
+##### 3.截图
+
 采用系统的截图方法
 
 ```
@@ -40,12 +48,13 @@
 ```
 用`UIImageToMat`将UIImage转成OpenCV中使用的格式`cv::Mat`
 
-###4.定位棋子的位置
+##### 4.定位棋子的位置
+
 OpenCV的`matchTemplate`方法可以根据模板图片查找在对应的目标图片中的位置，正好符合我们的需求，我们先截取一个棋子的模板文件
 
 ![](template.jpg)
 
-放入Assert文件夹下的Resource文件夹下，初始化相应的资源文件传入，获得棋子的位置
+放入`Assert`文件夹下的`Resource`文件夹下，初始化相应的资源文件传入，获得棋子的位置
 
 ```
 - (CvPoint)chess_Loc:(cv::Mat)res tempImage:(cv::Mat)temp result:(cv::Mat)result {
@@ -62,11 +71,12 @@ OpenCV的`matchTemplate`方法可以根据模板图片查找在对应的目标�
 }
 ```
 
-这步完成我们可以运行测试下，将结果转成UIImage存入相册看下棋子的位置是够正确
+这步完成我们可以运行测试下，将结果转成`UIImage`存入相册看下棋子的位置是够正确
 
 ![chess](IMG_1344.JPG)
 
-###5.获得下一步的位置
+##### 5.获得下一步的位置
+
 查找下一步位置的关键就是找出下一个方块的位置，我们暂且认为方块的上尖的位置就是下一个方块的位置，关键的方法是边缘检测函数`Canny`
 
 * 先用`cvtColor`将图片转化为灰度图
@@ -138,7 +148,8 @@ cv::rectangle(res, chessRect, cvScalar(0), -1);
 
 ![chess](IMG_1359.JPG)
 
-###6.计算时间
+##### 6.计算时间
+
 根据上两部算出来的位置算出距离进而得出时间
 
 ```
@@ -161,7 +172,7 @@ cv::rectangle(res, chessRect, cvScalar(0), -1);
 }
 ```
 
-###7.操作按压
+##### 7.操作按压
 
 随机一个屏幕下部分的点，用`FTFakeTouch`的`longPressAtPoint:duration:`实现长按
 
@@ -171,6 +182,5 @@ CGFloat x = (int)(randomRect.origin.x + (arc4random() % (int)randomRect.size.wid
                     [[FTFakeTouch sharedInstance] longPressAtPoint:CGPointMake(x, y) duration:time];
 ```
 
+
 以上就实现了整个需求，大家可以根据自己的手机大小试验出自己的系数
-
-
